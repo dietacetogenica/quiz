@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<title>Dieta Cetogênica Personalizada</title>
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{min-height:100%;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Helvetica Neue",Arial,sans-serif;background:#f0ece8;color:#1a1a1a;-webkit-font-smoothing:antialiased}
+.app{max-width:480px;min-height:100vh;margin:0 auto;background:#f0ece8;display:flex;flex-direction:column}
+/* HEADER */
+.hdr{display:flex;align-items:center;justify-content:space-between;padding:14px 18px 10px;background:#f0ece8;position:sticky;top:0;z-index:100}
+.bkb{width:36px;height:36px;border-radius:50%;background:#fff;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:20px;color:#333;box-shadow:0 1px 4px rgba(0,0,0,.1);transition:all .15s}
+.bkb:hover{background:#eee}
+.bkb.h{visibility:hidden}
+.logo{display:flex;align-items:center;gap:2px}
+.logo span:first-child{font-size:17px;font-weight:900;color:#1a1a1a;letter-spacing:-.5px;text-transform:uppercase}
+.logo span:last-child{font-size:17px;font-weight:900;color:#1a4a3a;letter-spacing:-.5px;text-transform:uppercase}
+.cnt{font-size:14px;font-weight:700;color:#888}
+/* PROGRESS */
+.pgw{height:4px;background:#e0dcd8}
+.pgb{height:100%;background:#1a4a3a;border-radius:0 2px 2px 0;transition:width .4s ease}
+/* SCREENS */
+.sc{display:none;flex-direction:column;flex:1;padding:24px 18px 32px;animation:fi .2s ease}
+.sc.on{display:flex}
+@keyframes fi{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+/* LANDING */
+.land{align-items:center;text-align:center;padding:36px 20px 36px}
+.land h1{font-size:30px;font-weight:900;line-height:1.15;color:#1a1a1a;margin-bottom:14px;letter-spacing:-.5px}
+.land p{font-size:15px;color:#666;line-height:1.65;margin-bottom:32px;max-width:320px}
+.land-sel{font-size:12px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#999;margin-bottom:14px}
+.gbrow{display:flex;gap:12px;width:100%}
+.gbt{flex:1;background:#1a1a1a;color:#fff;border:none;border-radius:50px;padding:16px 12px;font-size:16px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:all .15s}
+.gbt:hover{background:#333}
+.gbt.out{background:#fff;color:#1a1a1a;border:2px solid #1a1a1a}
+.gbt.out:hover{background:#f5f5f5}
+/* Q HEADER */
+.qey{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#1a4a3a;margin-bottom:6px}
+.qt{font-size:24px;font-weight:800;color:#1a1a1a;line-height:1.25;margin-bottom:5px;letter-spacing:-.4px}
+.qs{font-size:14px;color:#888;line-height:1.5;margin-bottom:22px}
+/* OPT LIST */
+.olist{display:flex;flex-direction:column;gap:10px}
+.ocard{display:flex;align-items:center;gap:14px;background:#fff;border-radius:16px;padding:16px 18px;cursor:pointer;border:2px solid transparent;transition:all .15s;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.ocard:hover,.ocard.sel{border-color:#1a4a3a;background:#f0f8f4}
+.ocard .oi{font-size:26px;width:36px;text-align:center;flex-shrink:0}
+.ocard .oimg{width:64px;height:64px;border-radius:50%;object-fit:cover;object-position:top;flex-shrink:0;background:#e8e4e0}
+.ocard .otxt{flex:1;font-size:16px;font-weight:600;color:#1a1a1a}
+.ocard .osub{font-size:12px;color:#888;font-weight:400;margin-top:2px}
+.ocard .oarr{color:#ccc;font-size:18px;font-weight:700;flex-shrink:0;transition:color .15s}
+.ocard:hover .oarr,.ocard.sel .oarr{color:#1a4a3a}
+/* CHECKBOX */
+.clist{display:flex;flex-direction:column;gap:10px}
+.ccard{display:flex;align-items:center;gap:14px;background:#fff;border-radius:16px;padding:16px 18px;cursor:pointer;border:2px solid transparent;transition:all .15s;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.ccard:hover,.ccard.ck{border-color:#1a4a3a;background:#f0f8f4}
+.ccard .ci{font-size:24px;width:34px;text-align:center;flex-shrink:0}
+.ccard .ct{flex:1;font-size:15px;font-weight:600;color:#1a1a1a}
+.cbox{width:24px;height:24px;border-radius:6px;border:2px solid #ddd;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;transition:all .15s;color:transparent}
+.ccard.ck .cbox{background:#1a4a3a;border-color:#1a4a3a;color:#fff}
+/* BODY ZONE */
+.bzwrap{position:relative;width:100%;display:flex;justify-content:center;margin-bottom:8px;min-height:300px}
+.bimg{height:300px;object-fit:contain;filter:drop-shadow(0 4px 16px rgba(0,0,0,.1))}
+.zbtn{position:absolute;background:#fff;border:2px solid #ddd;border-radius:50px;padding:7px 14px;font-size:13px;font-weight:700;color:#555;cursor:pointer;display:flex;align-items:center;gap:5px;transition:all .2s;white-space:nowrap;box-shadow:0 2px 8px rgba(0,0,0,.1)}
+.zbtn.on{background:#1a4a3a;border-color:#1a4a3a;color:#fff}
+.zbtn:hover{border-color:#1a4a3a}
+/* INPUT */
+.utg{display:flex;background:#fff;border-radius:50px;padding:4px;margin-bottom:18px;width:fit-content;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.ubt{padding:8px 24px;border-radius:50px;border:none;font-size:14px;font-weight:700;cursor:pointer;transition:all .2s;background:transparent;color:#999}
+.ubt.ac{background:#1a1a1a;color:#fff}
+.biwrap{position:relative;margin-bottom:8px}
+.bi{width:100%;padding:20px 60px 20px 24px;font-size:30px;font-weight:800;background:#fff;border:2px solid #e8e4e0;border-radius:16px;color:#1a1a1a;outline:none;font-variant-numeric:tabular-nums lining-nums;letter-spacing:-1px;transition:border-color .15s;-webkit-appearance:none}
+.bi:focus{border-color:#1a4a3a}
+.biu{position:absolute;right:20px;top:50%;transform:translateY(-50%);font-size:16px;font-weight:700;color:#aaa}
+.irow{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.ierr{font-size:12px;color:#e53935;font-weight:600;margin-top:4px;display:none}
+.ierr.on{display:block}
+/* INSERT */
+.ins-wrap{background:#fff;border-radius:20px;padding:28px 20px;text-align:center;box-shadow:0 2px 12px rgba(0,0,0,.06);margin-bottom:4px}
+.ins-img{width:180px;height:180px;border-radius:50%;object-fit:cover;object-position:top;margin:0 auto 20px;display:block;border:4px solid #f0ece8;background:#e8e4e0}
+.ins-t{font-size:22px;font-weight:800;color:#1a1a1a;line-height:1.25;margin-bottom:12px;letter-spacing:-.3px}
+.ins-s{font-size:14px;color:#666;line-height:1.7}
+/* SOCIAL */
+.sw{background:#fff;border-radius:20px;padding:24px 20px;box-shadow:0 2px 12px rgba(0,0,0,.06)}
+.pie{display:block;margin:0 auto 16px}
+.sw-t{font-size:20px;font-weight:800;color:#1a1a1a;line-height:1.25;margin-bottom:10px;text-align:center}
+.sw-s{font-size:13px;color:#666;line-height:1.65;text-align:center}
+.sw-n{font-size:10px;font-weight:700;color:#aaa;text-align:center;margin-top:14px;padding-top:14px;border-top:1px solid #f0ece8;letter-spacing:.5px;text-transform:uppercase}
+/* LOADING */
+.lwrap{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+.lic{font-size:64px;margin-bottom:20px;animation:boun 1.4s ease-in-out infinite}
+@keyframes boun{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+.lt{font-size:22px;font-weight:800;color:#1a1a1a;margin-bottom:8px}
+.ls{font-size:14px;color:#888;line-height:1.6;margin-bottom:28px;max-width:280px}
+.lbw{width:100%;max-width:300px;height:8px;background:#e8e4e0;border-radius:4px;overflow:hidden;margin-bottom:10px}
+.lb{height:100%;background:#1a4a3a;border-radius:4px;width:0%;transition:width .3s ease}
+.lp{font-size:13px;font-weight:700;color:#aaa;margin-bottom:24px}
+.lsteps{display:flex;flex-direction:column;gap:10px;width:100%;max-width:300px}
+.lstep{display:flex;align-items:center;gap:12px;opacity:0;transform:translateY(6px);transition:all .4s ease}
+.lstep.vis{opacity:1;transform:translateY(0)}
+.lstep.done{color:#1a4a3a;font-weight:600}
+.lsc{width:28px;height:28px;border-radius:50%;background:#e8e4e0;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0;transition:background .3s}
+.lstep.done .lsc{background:#1a4a3a;color:#fff}
+.lstxt{font-size:13px;color:#888;transition:color .3s}
+.lstep.done .lstxt{color:#1a4a3a}
+/* RESULT */
+.rhero{background:linear-gradient(150deg,#1a4a3a 0%,#245c49 100%);border-radius:20px;padding:24px 20px;color:#fff;margin-bottom:16px}
+.rbadge{display:inline-block;background:rgba(255,255,255,.15);border-radius:20px;padding:4px 14px;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,.8);margin-bottom:12px}
+.rlbl{font-size:12px;color:rgba(255,255,255,.65);margin-bottom:4px;font-weight:600}
+.rtit{font-size:24px;font-weight:800;line-height:1.2;margin-bottom:20px;letter-spacing:-.3px}
+.wpj{background:rgba(255,255,255,.12);border-radius:14px;padding:14px 16px;margin-bottom:12px}
+.wpjt{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,.55);margin-bottom:12px}
+.wrow{display:flex;justify-content:space-between;align-items:center}
+.wv{text-align:center}
+.wn{font-size:22px;font-weight:800;color:#fff;line-height:1;font-variant-numeric:tabular-nums lining-nums}
+.wl{font-size:9px;color:rgba(255,255,255,.55);text-transform:uppercase;letter-spacing:.5px;margin-top:3px;font-weight:700}
+.wa{color:rgba(255,255,255,.4);font-size:18px}
+.rdt{font-size:12px;color:rgba(255,255,255,.6);text-align:center}
+/* Promise */
+.pbox{background:#1a4a3a;border-radius:16px;padding:18px 20px;text-align:center;margin-bottom:16px}
+.pico{font-size:30px;margin-bottom:8px}
+.ptit{font-size:18px;font-weight:800;color:#fff;margin-bottom:6px}
+.ptxt{font-size:13px;color:rgba(255,255,255,.72);line-height:1.6}
+.pbadge{display:inline-block;background:rgba(255,255,255,.2);border-radius:20px;padding:4px 14px;font-size:11px;font-weight:700;color:#fff;margin-top:10px}
+/* Cards */
+.rcards{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+.rc{background:#fff;border-radius:16px;padding:16px 12px;text-align:center;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.rci{font-size:24px;margin-bottom:8px}
+.rcv{font-size:22px;font-weight:800;color:#1a4a3a;margin-bottom:3px;font-variant-numeric:tabular-nums lining-nums;letter-spacing:-.5px}
+.rcl{font-size:10px;font-weight:700;color:#aaa;text-transform:uppercase;letter-spacing:.5px}
+/* Tst */
+.tst{background:#fff;border-radius:16px;padding:18px;margin-bottom:10px;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.tst-st{color:#f59e0b;font-size:14px;margin-bottom:8px;letter-spacing:2px}
+.tst-tx{font-size:13px;color:#555;line-height:1.65;font-style:italic;margin-bottom:10px}
+.tst-au{font-size:12px;font-weight:700;color:#1a4a3a}
+/* BUTTONS */
+.btn{width:100%;background:#1a1a1a;color:#fff;border:none;border-radius:50px;padding:18px 20px;font-size:17px;font-weight:800;cursor:pointer;transition:all .15s;letter-spacing:-.2px;margin-top:20px}
+.btn:hover{background:#333;transform:scale(.99)}
+.btn:active{transform:scale(.97)}
+.btn.grn{background:#1a4a3a}
+.btn.grn:hover{background:#245c49}
+.btn-sub{text-align:center;font-size:12px;color:#aaa;margin-top:10px}
+.btn-grt{display:flex;align-items:center;justify-content:center;gap:8px;margin-top:12px;font-size:12px;font-weight:600;color:#888}
+</style>
+</head>
+<body>
+<div class="app" id="app">
+
+<!-- HEADER -->
+<div class="hdr">
+  <button class="bkb h" id="bkb" onclick="goBack()">‹</button>
+  <div class="logo"><span>DIETA </span><span>CETOGÊNICA</span></div>
+  <div class="cnt" id="cnt"></div>
+</div>
+<div class="pgw"><div class="pgb" id="pgb" style="width:0%"></div></div>
+
+<!-- S0: LANDING -->
+<div class="sc on" id="s0">
+  <div class="land">
+    <div style="font-size:72px;margin-bottom:20px">🥑</div>
+    <h1>Resultados reais,<br>comida real,<br>simples assim</h1>
+    <p>Emagrecer e recuperar energia é mais fácil do que você imagina. Tudo começa com um plano cetogênico personalizado só para você.</p>
+    <div class="land-sel">Selecione seu gênero</div>
+    <div class="gbrow">
+      <button class="gbt out" onclick="sg('homem')">👨 Masculino</button>
+      <button class="gbt" onclick="sg('mulher')">👩 Feminino</button>
+    </div>
+  </div>
+</div>
+
+<!-- S1: FAIXA ETÁRIA -->
+<div class="sc" id="s1">
+  <div class="qey">Plano Cetogênico</div>
+  <div class="qt">De acordo com sua idade</div>
+  <p class="qs">Seu metabolismo e necessidades mudam com o tempo. Vamos adaptar para você.</p>
+  <div class="olist" id="ageList">
+    <div class="ocard" onclick="pick(this,'idade','18-29')">
+      <img class="oimg" id="ai1" src="https://cdn.nocarbschallenge.com/funnel-assets/quiz/age-female-1.png" alt="18-29" onerror="this.style.background='#e8e4e0'">
+      <div><div class="otxt">18 – 29 anos</div></div><div class="oarr">→</div>
+    </div>
+    <div class="ocard" onclick="pick(this,'idade','30-39')">
+      <img class="oimg" id="ai2" src="https://cdn.nocarbschallenge.com/funnel-assets/quiz/age-female-2.png" alt="30-39" onerror="this.style.background='#e8e4e0'">
+      <div><div class="otxt">30 – 39 anos</div></div><div class="oarr">→</div>
+    </div>
+    <div class="ocard" onclick="pick(this,'idade','40-49')">
+      <img class="oimg" id="ai3" src="https://cdn.nocarbschallenge.com/funnel-assets/quiz/age-female-3.png" alt="40-49" onerror="this.style.background='#e8e4e0'">
+      <div><div class="otxt">40 – 49 anos</div></div><div class="oarr">→</div>
+    </div>
+    <div class="ocard" onclick="pick(this,'idade','50+')">
+      <img class="oimg" id="ai4" src="https://cdn.nocarbschallenge.com/funnel-assets/quiz/age-female-4.png" alt="50+" onerror="this.style.background='#e8e4e0'">
+      <div><div class="otxt">50 anos ou mais</div></div><div class="oarr">→</div>
+    </div>
+  </div>
+</div>
+
+<!-- S2: OBJETIVO -->
+<div class="sc" id="s2">
+  <div class="qt">Qual é o seu objetivo?</div>
+  <div class="olist">
+    <div class="ocard" onclick="pick(this,'obj','perder-peso')"><div class="oi">⚖️</div><div><div class="otxt">Perder peso</div><div class="osub">Emagrecer de forma saudável</div></div><div class="oarr">→</div></div>
+    <div class="ocard" onclick="pick(this,'obj','forma')"><div class="oi">🏃‍♀️</div><div><div class="otxt">Ficar em forma</div><div class="osub">Melhorar condicionamento</div></div><div class="oarr">→</div></div>
+    <div class="ocard" onclick="pick(this,'obj','tonificar')"><div class="oi">💪</div><div><div class="otxt">Tonificar o corpo</div><div class="osub">Definir e firmar</div></div><div class="oarr">→</div></div>
+    <div class="ocard" onclick="pick(this,'obj','metabolismo')"><div class="oi">🔥</div><div><div class="otxt">Acelerar metabolismo</div><div class="osub">Queimar mais gordura</div></div><div class="oarr">→</div></div>
+    <div class="ocard" onclick="pick(this,'obj','energia')"><div class="oi">⚡</div><div><div class="otxt">Melhorar energia</div><div class="osub">Acabar com o cansaço crônico</div></div><div class="oarr">→</div></div>
+    <div class="ocard" onclick="pick(this,'obj','hormonal')"><div class="oi">🌸</div><div><div class="otxt">Equilíbrio hormonal</div><div class="osub">Regularizar hormônios</div></div><div class="oarr">→</div></div>
+  </div>
+</div>
+
+<!-- S3: TIPO DE CORPO -->
+<div class="sc" id="s3">
+  <div class="qt">Qual é o seu tipo de corpo?</div>
+  <p class="qs">Isso nos ajuda a calcular suas necessidades calóricas com precisão.</p>
+  <div class="olist">
+    <div class="ocard" onclick="pick(this,'corpo','regular')">
+      <img class="oimg" src="https://cdn.nocarbschallenge.com/funnel-assets/quiz/female-regular-sized.png" alt="Regular" onerror="this.style.background='#c5e0d5'">
+      <div><div class="otxt">Regular</div><div class="osub">Peso próximo ao ideal</div></div><div class="oarr">→</div>
+    </div>
+    <div class="ocard" onclick="pick(this,'corpo','acima')">
+      <img class="oimg" src="https://cdn.nocarbschallenge.com/funnel-assets/quiz/female-plump-sized.png" alt="Acima" onerror="this.style.background='#c5e0d5'">
+      <div><div class="otxt">Acima do peso</div><div class="osub">Um pouco acima do ideal</div></div><div class="oarr">→</div>
+    </div>
+    <div class="ocard" onclick="pick(this,'corpo','sobrepeso')">
+      <img class="oimg" src="https://cdn.nocarbschallenge.com/funnel-assets/quiz/female-extra-sized.png" alt="Sobrepeso" onerror="this.style.background='#c5e0d5'">
+      <div><div class="otxt">Sobrepeso</div><div class="osub">Bem acima do peso ideal</div></div><div class="oarr">→</div>
+    </div>
+  </div>
+</div>
+
+<!-- S4: ÁREAS DO CORPO -->
+<div class="sc" id="s4">
+  <div class="qt">Há alguma área que você gostaria de melhorar?</div>
+  <p class="qs">Selecione todas que desejar. Pressione Continuar se estiver satisfeita.</p>
+  <div class="bzwrap">
+    <img class="bimg" id="bimg" src="https://cdn.nocarbschallenge.com/funnel-assets/quiz/female-regular-sized.png" alt="Corpo" onerror="this.style.height='260px';this.style.background='linear-gradient(135deg,#e0f2e9,#c5e0d5)';this.style.borderRadius='16px';this.style.width='100%'">
+    <div class="zbtn" style="top:20%;left:2%" onclick="tz(this,'barriga')"><span>＋</span> Barriga</div>
+    <div class="zbtn" style="top:24%;right:2%" onclick="tz(this,'bracos')"><span>＋</span> Braços</div>
+    <div class="zbtn" style="top:48%;left:2%" onclick="tz(this,'quadril')"><span>＋</span> Quadril</div>
+    <div class="zbtn" style="top:52%;right:2%" onclick="tz(this,'coxas')"><span>＋</span> Coxas</div>
+    <div class="zbtn" style="top:70%;left:2%" onclick="tz(this,'pernas')"><span>＋</span> Pernas</div>
+  </div>
+  <button class="btn" onclick="nx()">Continuar →</button>
+</div>
+
+<!-- S5: ROTINA -->
+<div class="sc" id="s5">
+  <div class="qt">Como é a sua rotina diária?</div>
+  <p class="qs">Selecione a que melhor descreve o seu dia a dia.</p>
+  <div class="olist">
+    <div class="ocard" onclick="pick(this,'rotina','escritorio')"><div class="oi">💻</div><div><div class="otxt">Trabalho de escritório</div><div class="osub">Fico sentada a maior parte</div></div><div class="oarr">→</div></div>
+    <div class="ocard" onclick="pick(this,'rotina','ativa')"><div class="oi">🚶‍♀️</div><div><div class="otxt">Bastante em movimento</div><div class="osub">Ando muito durante o dia</div></div><div class="oarr">→</div></div>
+    <div class="ocard" onclick="pick(this,'rotina','academia')"><div class="oi">🏋️‍♀️</div><div><div class="otxt">Pratico exercícios</div><div class="osub">Treino regularmente</div></div><div class="oarr">→</div></div>
+    <div class="ocard" onclick="pick(this,'rotina','casa')"><div class="oi">🏠</div><div><div class="otxt">Fico em casa</div><div class="osub">Trabalho ou cuido da casa</div></div><div class="oarr">→</div></div>
+  </div>
+</div>
+
+<!-- S6: ÚLTIMA VEZ SATISFEITA -->
+<div class="sc" id="s6">
+  <div class="qt">Quando estava satisfeita com seu peso?</div>
+  <div class="olist">
+    <div class="ocard" onclick="pick(this,'ultima','menos1')"><div class="oi">📅</div><div class="otxt">Há menos de 1 ano</div><div class="oarr">→</div></div>
+    <div class="ocard" onclick="pick(this,'ultima','1-3')"><div class="oi">⏳</div><div class="otxt">1 a 3 anos atrás</div><div class="oarr">→</div></div>
+    <div class="ocard" onclick="pick(this,'ultima','mais3')"><div class="oi">🕰️</div><div class="otxt">Mais de 3 anos atrás</div><div class="oarr">→</div></div>
+    <div class="ocard" onclick="pick(this,'ultima','nunca')"><div class="oi">🤷‍♀️</div><div class="otxt">Nunca me senti assim</div><div class="oarr">→</div></div>
+  </div>
+</div>
+
+<!-- S7: EXERCÍCIO -->
+<div class="sc" id="s7">
+  <div class="qt">Você gosta de se exercitar?</div>
+  <p class="qs">Uma ótima forma de acelerar seus resultados é se exercitar — mas não é obrigatório.</p>
+  <div class="olist">
+    <div class="ocard" onclick="pick(this,'exercicio','nao')"><div class="oi">🙅‍♀️</div><div class="otxt">Não, não gosto</div><div class="oarr">→</div></div>
+    <div class="ocard" onclick="pick(this,'exercicio','tento')"><div class="oi">🚶‍♀️</div><div class="otxt">Não, mas tento me manter ativa</div><div class="oarr">→</div></div>
+    <div class="ocard" onclick="pick(this,'exercicio','as-vezes')"><div class="oi">🙂</div><div class="otxt">Sim, às vezes</div><div class="oarr">→</div></div>
+    <div class="ocard" onclick="pick(this,'exercicio','regular')"><div class="oi">💪</div><div class="otxt">Sim, regularmente</div><div class="oarr">→</div></div>
+  </div>
+</div>
+
+<!-- S8: ALTURA -->
+<div class="sc" id="s8">
+  <div class="qt">Qual é a sua altura?</div>
+  <p class="qs">A altura nos ajuda a calcular seu IMC e plano ideal.</p>
+  <div class="utg">
+    <button class="ubt ac" id="bFT" onclick="su('alt','ft')">FT</button>
+    <button class="ubt" id="bCM" onclick="su('alt','cm')">CM</button>
+  </div>
+  <div id="dFT">
+    <div class="irow">
+      <div class="biwrap"><input class="bi" type="number" id="aFt" placeholder="5" min="3" max="7" inputmode="numeric"><span class="biu">pés</span></div>
+      <div class="biwrap"><input class="bi" type="number" id="aIn" placeholder="5" min="0" max="11" inputmode="numeric"><span class="biu">pol.</span></div>
+    </div>
+  </div>
+  <div id="dCM" style="display:none">
+    <div class="biwrap"><input class="bi" type="number" id="aCM" placeholder="165" min="100" max="220" inputmode="numeric"><span class="biu">cm</span></div>
+  </div>
+  <div class="ierr" id="eAlt">Por favor, insira uma altura válida.</div>
+  <button class="btn" onclick="vAlt()">Continuar →</button>
+</div>
+
+<!-- S9: PESO ATUAL -->
+<div class="sc" id="s9">
+  <div class="qt">Qual é o seu peso atual?</div>
+  <p class="qs">O peso nos ajuda a calcular seu IMC e criar o plano mais eficaz.</p>
+  <div class="utg">
+    <button class="ubt ac" id="bKG" onclick="su('peso','kg')">KG</button>
+    <button class="ubt" id="bLB" onclick="su('peso','lb')">LB</button>
+  </div>
+  <div class="biwrap"><input class="bi" type="number" id="iPeso" placeholder="70" min="30" max="300" inputmode="numeric"><span class="biu" id="uPeso">kg</span></div>
+  <div class="ierr" id="ePeso">Por favor, insira um peso válido.</div>
+  <button class="btn" onclick="vPeso()">Continuar →</button>
+</div>
+
+<!-- S10: PESO DESEJADO -->
+<div class="sc" id="s10">
+  <div class="qt">Qual é o seu peso desejado?</div>
+  <p class="qs">Vamos calcular quanto você consegue nos primeiros 15 dias!</p>
+  <div class="biwrap"><input class="bi" type="number" id="iMeta" placeholder="60" min="30" max="200" inputmode="numeric"><span class="biu" id="uMeta">kg</span></div>
+  <div class="ierr" id="eMeta">O peso desejado deve ser menor que o atual.</div>
+  <button class="btn" onclick="vMeta()">Continuar →</button>
+</div>
+
+<!-- S11: IDADE (número) -->
+<div class="sc" id="s11">
+  <div class="qt">Qual é a sua idade?</div>
+  <div class="biwrap"><input class="bi" type="number" id="iIdade" placeholder="35" min="18" max="80" inputmode="numeric"><span class="biu">anos</span></div>
+  <div class="ierr" id="eIdade">Por favor, insira uma idade válida (18-80).</div>
+  <button class="btn" onclick="vIdade()">Continuar →</button>
+</div>
+
+<!-- S12: INSERT MOTIVAÇÃO -->
+<div class="sc" id="s12">
+  <div class="ins-wrap">
+    <img class="ins-img" id="insImg" src="https://cdn.nocarbschallenge.com/funnel-assets/quiz/age-female-3.png" alt="Motivação" onerror="this.style.background='linear-gradient(135deg,#c5e0d5,#8abfb0)'">
+    <div class="ins-t" id="insT">Energize seus melhores anos</div>
+    <p class="ins-s" id="insS">Mulheres na faixa dos 40 anos que adotam a dieta cetogênica relatam aumento de energia, redução do inchaço e melhora no humor em menos de 2 semanas.</p>
+  </div>
+  <button class="btn" onclick="nx()">Continuar →</button>
+</div>
+
+<!-- S13: HÁBITOS -->
+<div class="sc" id="s13">
+  <div class="qt">Selecione o que você costuma fazer:</div>
+  <p class="qs">Pode marcar mais de um. Isso torna seu plano ainda mais preciso.</p>
+  <div class="clist">
+    <div class="ccard" onclick="tc(this,'habitos','jantar-tarde')"><div class="ci">🌙</div><div class="ct">Janto tarde da noite</div><div class="cbox">✓</div></div>
+    <div class="ccard" onclick="tc(this,'habitos','doces')"><div class="ci">🍬</div><div class="ct">Não consigo parar de comer doces</div><div class="cbox">✓</div></div>
+    <div class="ccard" onclick="tc(this,'habitos','refri')"><div class="ci">🥤</div><div class="ct">Gosto de refrigerantes</div><div class="cbox">✓</div></div>
+    <div class="ccard" onclick="tc(this,'habitos','alcool')"><div class="ci">🍷</div><div class="ct">Consumo bebidas alcoólicas às vezes</div><div class="cbox">✓</div></div>
+    <div class="ccard" onclick="tc(this,'habitos','gorduroso')"><div class="ci">🍔</div><div class="ct">Prefiro alimentos gordurosos ou salgados</div><div class="cbox">✓</div></div>
+  </div>
+  <button class="btn" onclick="nx()">Continuar →</button>
+</div>
+
+<!-- S14: PROVA SOCIAL -->
+<div class="sc" id="s14">
+  <div class="sw">
+    <svg class="pie" width="180" height="180" viewBox="0 0 180 180">
+      <circle cx="90" cy="90" r="80" fill="#f0ece8"/>
+      <path d="M90,90 L90,10 A80,80 0 0,1 165,127 Z" fill="#1a4a3a"/>
+      <path d="M90,90 L165,127 A80,80 0 0,1 38,148 Z" fill="#1a4a3a"/>
+      <path d="M90,90 L38,148 A80,80 0 0,1 16,90 Z" fill="#6b9a8c"/>
+      <path d="M90,90 L16,90 A80,80 0 0,1 90,10 Z" fill="#a8c8b8" opacity="0.7"/>
+      <text x="120" y="78" fill="white" font-size="14" font-weight="800" text-anchor="middle" font-family="-apple-system,Arial">71%</text>
+      <text x="36" y="148" fill="#1a4a3a" font-size="10" font-weight="700" text-anchor="middle" font-family="Arial">8%</text>
+      <text x="30" y="85" fill="#4a7a6a" font-size="10" font-weight="700" text-anchor="middle" font-family="Arial">21%</text>
+    </svg>
+    <div class="sw-t">Você respondeu como quem<br>já atingiu seus objetivos!</div>
+    <div class="sw-s">Mais de <strong>79% das usuárias</strong> com o seu perfil reduziram 1 a 2 tamanhos de roupa em aproximadamente 15 dias com o método cetogênico.</div>
+    
+  </div>
+  <button class="btn" onclick="startLoad()">Ver meu resultado →</button>
+</div>
+
+<!-- S15: LOADING -->
+<div class="sc" id="s15" style="padding:40px 24px">
+  <div class="lwrap">
+    <div class="lic">🧬</div>
+    <div class="lt">Criando seu plano personalizado...</div>
+    <p class="ls">Analisando suas respostas para montar o cardápio cetogênico ideal para você</p>
+    <div class="lbw"><div class="lb" id="lb"></div></div>
+    <div class="lp" id="lp">0%</div>
+    <div class="lsteps">
+      <div class="lstep" id="ls1"><div class="lsc">📊</div><span class="lstxt">Analisando seu metabolismo...</span></div>
+      <div class="lstep" id="ls2"><div class="lsc">🍽️</div><span class="lstxt">Calculando calorias ideais...</span></div>
+      <div class="lstep" id="ls3"><div class="lsc">🥑</div><span class="lstxt">Selecionando alimentos cetogênicos...</span></div>
+      <div class="lstep" id="ls4"><div class="lsc">📅</div><span class="lstxt">Montando cardápio de 15 dias...</span></div>
+      <div class="lstep" id="ls5"><div class="lsc">✅</div><span class="lstxt">Plano pronto!</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- S16: RESULTADO -->
+<div class="sc" id="s16">
+  <div class="rhero">
+    <div class="rbadge">✦ SEU PLANO PERSONALIZADO</div>
+    <div class="rlbl" id="rlbl">Plano para Perder Peso</div>
+    <div class="rtit" id="rtit">Veja o que você alcança<br>em <strong>15 dias!</strong></div>
+    <div class="wpj">
+      <div class="wpjt">Projeção — 15 dias</div>
+      <div class="wrow">
+        <div class="wv"><div class="wn" id="rP">72kg</div><div class="wl">Hoje</div></div>
+        <div class="wa">→</div>
+        <div class="wv"><div class="wn" id="rI">70kg</div><div class="wl">Em 15 dias</div></div>
+        <div class="wa">→</div>
+        <div class="wv"><div class="wn" id="rM">60kg</div><div class="wl">Objetivo</div></div>
+      </div>
+    </div>
+    <div class="rdt">Nos 15 primeiros dias: inchaço reduzido + primeiros kg a menos</div>
+  </div>
+  <div class="pbox">
+    <div class="pico">⚡</div>
+    <div class="ptit">Resultados em 15 dias</div>
+    <p class="ptxt">Siga o plano cetogênico por 15 dias e você verá redução do inchaço, mais energia e os primeiros quilos a menos — ou devolvemos seu dinheiro.</p>
+    <div class="pbadge">✓ Garantia de 7 dias · 100% seguro</div>
+  </div>
+  <div class="rcards">
+    <div class="rc"><div class="rci">📅</div><div class="rcv">7</div><div class="rcl">Dias Cardápio</div></div>
+    <div class="rc"><div class="rci">🍽️</div><div class="rcv">28</div><div class="rcl">Refeições</div></div>
+    <div class="rc"><div class="rci">⚡</div><div class="rcv" id="rK">1.650</div><div class="rcl">kcal / dia</div></div>
+    <div class="rc"><div class="rci">🥑</div><div class="rcv">&lt;30g</div><div class="rcl">Carbs / dia</div></div>
+  </div>
+  <div id="tsts"></div>
+  <button class="btn grn" onclick="checkout()">🚀 Quero meu plano completo →</button>
+  <p class="btn-sub">Acesso imediato após a confirmação</p>
+  <div class="btn-grt">🔒 Pagamento 100% seguro &nbsp;|&nbsp; Garantia 7 dias</div>
+  <div style="height:32px"></div>
+</div>
+
+<!-- ══ S17: NOME ══ -->
+<div class="sc" id="s17">
+  <div style="flex:1;display:flex;flex-direction:column;justify-content:center;padding:0 4px">
+    <div class="qt" style="text-align:center;margin-bottom:28px">Qual é o seu nome?</div>
+    <div class="biwrap" style="margin-bottom:16px">
+      <input class="bi" type="text" id="iNome" placeholder="Nome"
+             style="font-size:20px;letter-spacing:0;text-align:center;font-weight:600"
+             oninput="document.getElementById('btnNome').style.background=this.value.trim()?'#1a1a1a':'#c8c4be'">
+    </div>
+    <button id="btnNome" class="btn" style="background:#c8c4be;margin-top:0" onclick="vNome()">Continuar</button>
+  </div>
+</div>
+
+<!-- ══ S18: RESUMO PESSOAL (IMC + GAUGE) ══ -->
+<div class="sc" id="s18">
+  <div class="qt" style="text-align:center;margin-bottom:16px">Seu resumo pessoal</div>
+  <div style="background:#fff;border-radius:18px;padding:20px 18px;box-shadow:0 1px 4px rgba(0,0,0,.07)">
+    <div id="imcBox" style="background:#fef9e7;border-radius:12px;padding:14px 16px;text-align:center;margin-bottom:18px">
+      <div style="font-size:11px;color:#888;font-weight:600;margin-bottom:4px">Índice de Massa Corporal (IMC)</div>
+      <div id="imcLabel" style="font-size:22px;font-weight:900;color:#1a1a1a;margin-bottom:16px">Sobrepeso</div>
+      <svg width="180" height="100" viewBox="0 0 180 100" style="display:block;margin:0 auto 10px">
+        <defs>
+          <linearGradient id="g1" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#4285f4"/>
+            <stop offset="25%" stop-color="#34a853"/>
+            <stop offset="50%" stop-color="#fbbc04"/>
+            <stop offset="75%" stop-color="#fa7b17"/>
+            <stop offset="100%" stop-color="#ea4335"/>
+          </linearGradient>
+        </defs>
+        <path d="M 14 90 A 76 76 0 0 1 166 90" fill="none" stroke="#e8e8e8" stroke-width="14" stroke-linecap="round"/>
+        <path d="M 14 90 A 76 76 0 0 1 166 90" fill="none" stroke="url(#g1)" stroke-width="14" stroke-linecap="round"/>
+        <g id="needle" transform="rotate(0 90 90)">
+          <line x1="90" y1="90" x2="90" y2="22" stroke="#1a1a1a" stroke-width="3" stroke-linecap="round"/>
+          <circle cx="90" cy="90" r="6" fill="#1a1a1a"/>
+        </g>
+        <text x="8" y="100" font-size="9" fill="#888" font-family="Arial" font-weight="600">Baixo</text>
+        <text x="68" y="12" font-size="9" fill="#888" font-family="Arial" font-weight="600">Normal</text>
+        <text x="148" y="100" font-size="9" fill="#888" font-family="Arial" font-weight="600">Alto</text>
+      </svg>
+      <div style="display:flex;align-items:flex-start;gap:6px;text-align:left;background:#fff8f0;border-radius:8px;padding:10px 12px">
+        <span style="color:#fa7b17;font-size:14px;flex-shrink:0">ⓘ</span>
+        <div>
+          <div style="font-size:12px;font-weight:700;color:#fa7b17;margin-bottom:3px" id="imcRiskTitle">Riscos de um IMC não saudável</div>
+          <div style="font-size:11px;color:#666;line-height:1.55" id="imcRiskText">Pressão alta, aumento do risco de ataque cardíaco, diabetes tipo 2, dor crônica nas costas e articulações.</div>
+        </div>
+      </div>
+    </div>
+    <div style="display:flex;align-items:flex-start;gap:12px">
+      <div style="flex:1;display:flex;flex-direction:column;gap:12px">
+        <div>
+          <div style="font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#aaa;margin-bottom:2px">OBJETIVO</div>
+          <div style="font-size:14px;font-weight:700;color:#1a1a1a;display:flex;align-items:center;gap:6px"><span id="rObjEmoji">⚖️</span><span id="rObjText">Perder peso</span></div>
+        </div>
+        <div>
+          <div style="font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#aaa;margin-bottom:2px">EXERCÍCIO</div>
+          <div style="font-size:14px;font-weight:700;color:#1a1a1a;display:flex;align-items:center;gap:6px"><span>🏃‍♀️</span><span id="rExerText">Leve</span></div>
+        </div>
+        <div>
+          <div style="font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#aaa;margin-bottom:2px">NÍVEL DE ATIVIDADE</div>
+          <div style="font-size:14px;font-weight:700;color:#1a1a1a;display:flex;align-items:center;gap:6px"><span>📅</span><span id="rAtivText">Baixo</span></div>
+        </div>
+      </div>
+      <img id="resumoBodyImg"
+           src="https://cdn.nocarbschallenge.com/funnel-assets/quiz/female-plump-sized.png"
+           style="width:90px;height:120px;object-fit:cover;object-position:top;border-radius:12px;flex-shrink:0;background:#e8e4e0"
+           onerror="this.style.background='linear-gradient(135deg,#c5e0d5,#8abfb0)'">
+    </div>
+  </div>
+  <button class="btn" onclick="goReviews()">Continuar →</button>
+</div>
+
+<!-- ══ S19: LOADING + REVIEWS ══ -->
+<div class="sc" id="s19" style="padding:0;background:#ddeeff">
+  <div style="background:#ddeeff;padding:28px 20px 16px;text-align:center;flex-shrink:0">
+    <div style="position:relative;width:90px;height:90px;margin:0 auto 12px">
+      <svg width="90" height="90" viewBox="0 0 90 90">
+        <circle cx="45" cy="45" r="38" fill="none" stroke="#c5d8ee" stroke-width="6"/>
+        <circle cx="45" cy="45" r="38" fill="none" stroke="#2196f3" stroke-width="6"
+                stroke-linecap="round" stroke-dasharray="239" stroke-dashoffset="239"
+                id="reviewCircle" style="transform:rotate(-90deg);transform-origin:45px 45px;transition:stroke-dashoffset .3s"/>
+      </svg>
+      <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center">
+        <span id="reviewPct" style="font-size:18px;font-weight:800;color:#1a1a1a">0%</span>
+      </div>
+    </div>
+    <div style="font-size:13px;color:#666;font-weight:600">Calculando seus resultados</div>
+  </div>
+  <div style="background:#fff;padding:14px 16px 8px;text-align:center;flex-shrink:0">
+    <div style="font-size:17px;font-weight:800;color:#1a1a1a">O que nossas usuárias estão dizendo</div>
+  </div>
+  <div style="flex:1;overflow-y:auto;padding:10px 14px 16px;background:#ddeeff;display:flex;flex-direction:column;gap:10px">
+    <div style="background:#fff;border-radius:14px;padding:14px;box-shadow:0 1px 4px rgba(0,0,0,.06)">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+        <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#f5c5a0,#e08060);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0">👩</div>
+        <div><div style="font-size:13px;font-weight:700">Claudia M.</div><div style="color:#f59e0b;font-size:12px">★★★★★</div></div>
+      </div>
+      <p style="font-size:12px;color:#555;line-height:1.65;margin:0">"Em 15 dias o inchaço que eu tinha há anos foi embora. Perdi 3kg e me sinto outra pessoa. O plano cetogênico mudou minha vida!"</p>
+    </div>
+    <div style="background:#fff;border-radius:14px;padding:14px;box-shadow:0 1px 4px rgba(0,0,0,.06)">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+        <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#a0c5f5,#6080e0);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0">👩‍🦱</div>
+        <div><div style="font-size:13px;font-weight:700">Fernanda R.</div><div style="color:#f59e0b;font-size:12px">★★★★★</div></div>
+      </div>
+      <p style="font-size:12px;color:#555;line-height:1.65;margin:0">"A calça que não fechava voltou a servir em menos de 2 semanas. Muitas opções de receitas gostosas e plano muito fácil de seguir!"</p>
+    </div>
+    <div style="background:#fff;border-radius:14px;padding:14px;box-shadow:0 1px 4px rgba(0,0,0,.06)">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+        <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#c5f5a0,#60e080);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0">👩‍🦰</div>
+        <div><div style="font-size:13px;font-weight:700">Patrícia S.</div><div style="color:#f59e0b;font-size:12px">★★★★★</div></div>
+      </div>
+      <p style="font-size:12px;color:#555;line-height:1.65;margin:0">"O plano cetogênico me ajudou a regularizar minha energia. Agora acordo disposta todo dia e finalmente consigo me manter ativa!"</p>
+    </div>
+    <div style="background:#fff;border-radius:14px;padding:14px;box-shadow:0 1px 4px rgba(0,0,0,.06)">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+        <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#f5a0c5,#e06080);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0">👩‍🦳</div>
+        <div><div style="font-size:13px;font-weight:700">Sandra L.</div><div style="color:#f59e0b;font-size:12px">★★★★★</div></div>
+      </div>
+      <p style="font-size:12px;color:#555;line-height:1.65;margin:0">"Meu maior problema era o vício em doces. Com a dieta cetogênica aprendi a substituir e perdi 4,5kg em um mês. Incrível!"</p>
+    </div>
+    <div style="background:#fff;border-radius:14px;padding:14px;box-shadow:0 1px 4px rgba(0,0,0,.06)">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+        <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#f5e0a0,#e0b060);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0">👩</div>
+        <div><div style="font-size:13px;font-weight:700">Beatriz F.</div><div style="color:#f59e0b;font-size:12px">★★★★★</div></div>
+      </div>
+      <p style="font-size:12px;color:#555;line-height:1.65;margin:0">"Finalmente um plano com refeições gostosas! Não é só brócolis cozido. Resultados reais e a TPM melhorou muito também!"</p>
+    </div>
+  </div>
+</div>
+
+</div>
+<script>
+const CHECKOUT='https://pay.cakto.com.br/e9owckv_862385';
+const CDN='https://cdn.nocarbschallenge.com/funnel-assets/quiz';
+const S={nome:'',genero:'mulher',idade:null,obj:null,corpo:null,zonas:[],rotina:null,ultima:null,exercicio:null,altura:null,altU:'ft',peso:null,meta:null,pesoU:'kg',habitos:[],idadeN:null};
+const FLOW=['s0','s1','s2','s3','s4','s5','s6','s7','s8','s9','s10','s11','s12','s13','s14','s15','s17','s18','s19','s16'];
+const TQ=16;
+let cur=0;
+
+function go(n){
+  document.querySelectorAll('.sc').forEach(s=>s.classList.remove('on'));
+  document.getElementById(FLOW[n]).classList.add('on');
+  cur=n;
+  const bk=document.getElementById('bkb');
+  const ct=document.getElementById('cnt');
+  const pg=document.getElementById('pgb');
+  if(n===0){bk.className='bkb h';ct.textContent='';pg.style.width='0%';}
+  else if(n>=15){bk.className='bkb h';ct.textContent='';pg.style.width='100%';}
+  else{bk.className='bkb';ct.textContent=n+'/'+TQ;pg.style.width=Math.min(n/TQ*100,100)+'%';}
+  window.scrollTo(0,0);
+}
+function goBack(){if(cur>1)go(cur-1);else if(cur===1)go(0);}
+function nx(){if(cur<FLOW.length-1)go(cur+1);}
+function checkout(){window.location.href=CHECKOUT;}
+
+function sg(g){
+  S.genero=g;
+  const imgs=g==='mulher'?['age-female-1','age-female-2','age-female-3','age-female-4']:['age-male-1','age-male-2','age-male-3','age-male-4'];
+  ['ai1','ai2','ai3','ai4'].forEach((id,i)=>{const el=document.getElementById(id);if(el)el.src=CDN+'/'+imgs[i]+'.png';});
+  go(1);
+}
+
+function pick(el,key,val){
+  el.closest('.olist').querySelectorAll('.ocard').forEach(c=>c.classList.remove('sel'));
+  el.classList.add('sel');
+  S[key]=val;
+  if(key==='idade')upIns(val);
+  setTimeout(()=>nx(),280);
+}
+
+function tz(btn,zone){
+  btn.classList.toggle('on');
+  const sp=btn.querySelector('span');
+  if(btn.classList.contains('on')){sp.textContent='✓';if(!S.zonas.includes(zone))S.zonas.push(zone);}
+  else{sp.textContent='＋';S.zonas=S.zonas.filter(z=>z!==zone);}
+}
+
+function tc(el,key,val){
+  el.classList.toggle('ck');
+  if(el.classList.contains('ck')){if(!S[key].includes(val))S[key].push(val);}
+  else{S[key]=S[key].filter(v=>v!==val);}
+}
+
+function su(type,u){
+  if(type==='alt'){
+    S.altU=u;
+    document.getElementById('dFT').style.display=u==='ft'?'block':'none';
+    document.getElementById('dCM').style.display=u==='cm'?'block':'none';
+    document.getElementById('bFT').className=u==='ft'?'ubt ac':'ubt';
+    document.getElementById('bCM').className=u==='cm'?'ubt ac':'ubt';
+  }
+  if(type==='peso'){
+    S.pesoU=u;
+    document.getElementById('uPeso').textContent=u;
+    document.getElementById('uMeta').textContent=u;
+    document.getElementById('bKG').className=u==='kg'?'ubt ac':'ubt';
+    document.getElementById('bLB').className=u==='lb'?'ubt ac':'ubt';
+    document.getElementById('iPeso').placeholder=u==='kg'?'70':'154';
+    document.getElementById('iMeta').placeholder=u==='kg'?'60':'132';
+  }
+}
+
+function vAlt(){
+  let ok=false;
+  if(S.altU==='cm'){const v=parseFloat(document.getElementById('aCM').value);if(v>=100&&v<=220){S.altura=v;ok=true;}}
+  else{const ft=parseFloat(document.getElementById('aFt').value)||0;const inc=parseFloat(document.getElementById('aIn').value)||0;if(ft>=3&&ft<=7){S.altura=ft*30.48+inc*2.54;ok=true;}}
+  document.getElementById('eAlt').className=ok?'ierr':'ierr on';
+  if(ok)nx();
+}
+function vPeso(){
+  const v=parseFloat(document.getElementById('iPeso').value);
+  const ok=v>=30&&v<=300;
+  document.getElementById('ePeso').className=ok?'ierr':'ierr on';
+  if(ok){S.peso=v;nx();}
+}
+function vMeta(){
+  const v=parseFloat(document.getElementById('iMeta').value);
+  const ok=v>=30&&v<=200&&v<(S.peso||999);
+  document.getElementById('eMeta').className=ok?'ierr':'ierr on';
+  if(ok){S.meta=v;nx();}
+}
+function vIdade(){
+  const v=parseInt(document.getElementById('iIdade').value);
+  const ok=v>=18&&v<=80;
+  document.getElementById('eIdade').className=ok?'ierr':'ierr on';
+  if(ok){S.idadeN=v;upIns(S.idade);nx();}
+}
+
+function upIns(faixa){
+  const d={
+    '18-29':{img:CDN+'/age-female-1.png',t:'Construa a melhor versão de você',s:'Mulheres jovens que adotam a dieta cetogênica relatam pele mais saudável, foco mental aumentado e energia constante. Você está no momento perfeito para começar.'},
+    '30-39':{img:CDN+'/age-female-2.png',t:'Reconquiste sua energia e confiança',s:'Na faixa dos 30 anos o metabolismo começa a mudar. A dieta cetogênica regula hormônios, elimina o inchaço e devolve a disposição que você sente falta.'},
+    '40-49':{img:CDN+'/age-female-3.png',t:'Energize seus melhores anos',s:'Mulheres na faixa dos 40 anos que adotam a dieta cetogênica relatam aumento de energia, redução do inchaço e melhora no humor em menos de 2 semanas.'},
+    '50+':{img:CDN+'/age-female-4.png',t:'Viva com leveza e vitalidade',s:'Acima dos 50 anos, o método cetogênico é especialmente eficaz para reduzir o inchaço, melhorar o sono e aumentar a disposição de forma sustentável.'}
+  };
+  const x=d[faixa]||d['40-49'];
+  document.getElementById('insImg').src=x.img;
+  document.getElementById('insT').textContent=x.t;
+  document.getElementById('insS').textContent=x.s;
+}
+
+function startLoad(){
+  go(15);
+  const bar=document.getElementById('lb'),pct=document.getElementById('lp');
+  let p=0;
+  const steps=['ls1','ls2','ls3','ls4','ls5'],thr=[18,38,58,78,96];
+  const iv=setInterval(()=>{
+    p+=Math.random()*5+2;if(p>100)p=100;
+    bar.style.width=p+'%';pct.textContent=Math.floor(p)+'%';
+    thr.forEach((t,i)=>{if(p>=t){const el=document.getElementById(steps[i]);if(!el.classList.contains('vis')){el.classList.add('vis');setTimeout(()=>el.classList.add('done'),400);}}});
+    if(p>=100){clearInterval(iv);setTimeout(()=>nx(),800);}
+  },100);
+}
+
+function buildResult(){
+  const peso=S.peso||72,meta=S.meta||60,u=S.pesoU;
+  const perda15=Math.min(peso-meta,2.0);
+  const proj15=+(peso-perda15).toFixed(1);
+  document.getElementById('rP').innerHTML=peso+'<small style="font-size:14px">'+u+'</small>';
+  document.getElementById('rI').innerHTML=proj15+'<small style="font-size:14px">'+u+'</small>';
+  document.getElementById('rM').innerHTML=meta+'<small style="font-size:14px">'+u+'</small>';
+
+  const kb={'perder-peso':1500,'forma':1700,'tonificar':1750,'metabolismo':1600,'energia':1650,'hormonal':1580};
+  const km={escritorio:0,ativa:150,academia:300,casa:-50};
+  const kcal=(kb[S.obj]||1650)+(km[S.rotina]||0);
+  document.getElementById('rK').textContent=kcal.toLocaleString('pt-BR');
+
+  const lbls={'perder-peso':'Plano para Perder Peso',forma:'Plano para Ficar em Forma',tonificar:'Plano para Tonificar o Corpo',metabolismo:'Plano de Aceleração Metabólica',energia:'Plano de Energia e Disposição',hormonal:'Plano de Equilíbrio Hormonal'};
+  document.getElementById('rlbl').textContent=lbls[S.obj]||'Plano Cetogênico Personalizado';
+
+  const tits={'perder-peso':'Você pode perder os primeiros<br>quilos em <strong>15 dias!</strong>',forma:'Comece a sentir seu corpo<br>mudar em <strong>15 dias!</strong>',tonificar:'Seus músculos vão começar<br>a aparecer em <strong>15 dias!</strong>',metabolismo:'Seu metabolismo vai acelerar<br>em <strong>15 dias!</strong>',energia:'Sua energia vai explodir<br>nos primeiros <strong>15 dias!</strong>',hormonal:'Seu equilíbrio começa a<br>melhorar em <strong>15 dias!</strong>'};
+  document.getElementById('rtit').innerHTML=tits[S.obj]||'Veja o que você alcança<br>em <strong>15 dias!</strong>';
+
+  const ts={'perder-peso':[{st:'★★★★★',tx:'"Em 15 dias o inchaço sumiu e perdi 3kg. Nunca imaginei que seria tão simples!"',au:'Claudia M., 48 anos — São Paulo ✓'},{st:'★★★★★',tx:'"Já na primeira semana a calça voltou a fechar. Em 15 dias todo mundo comentou!"',au:'Fernanda R., 44 anos — Belo Horizonte ✓'}],energia:[{st:'★★★★★',tx:'"Nunca tive tanta energia! Já na segunda semana acordava descansada e disposta."',au:'Patrícia S., 39 anos — Rio de Janeiro ✓'},{st:'★★★★★',tx:'"O cansaço foi embora. Em 15 dias eu já estava correndo na esteira!"',au:'Sandra L., 52 anos — Curitiba ✓'}],hormonal:[{st:'★★★★★',tx:'"Meu ciclo regularizou em 3 semanas. O plano fez o que nenhum médico conseguiu!"',au:'Mariana C., 36 anos — Salvador ✓'},{st:'★★★★★',tx:'"A TPM melhorou demais! Menos inchaço, menos irritabilidade. Recomendo!"',au:'Beatriz F., 43 anos — Fortaleza ✓'}],default:[{st:'★★★★★',tx:'"Em 15 dias vi diferença real no espelho. Simples, gostoso e funciona de verdade!"',au:'Renata O., 45 anos — São Paulo ✓'},{st:'★★★★★',tx:'"Perdi 4kg no primeiro mês. Mas o melhor foi a energia — minha família percebeu antes!"',au:'Luciana M., 41 anos — Porto Alegre ✓'}]};
+  const td=ts[S.obj]||ts.default;
+  document.getElementById('tsts').innerHTML=td.map(t=>'<div class="tst"><div class="tst-st">'+t.st+'</div><p class="tst-tx">'+t.tx+'</p><div class="tst-au">'+t.au+'</div></div>').join('');
+}
+
+go(0);
+
+// ── NOME ────────────────────────────────────
+function vNome(){
+  const v=document.getElementById('iNome').value.trim();
+  if(!v)return;
+  S.nome=v;
+  buildResumo();
+  nx();
+}
+
+// ── RESUMO PESSOAL ────────────────────────────
+function buildResumo(){
+  const peso=S.peso||72, alt=S.altura||165, u=S.pesoU||'kg';
+  // Calculate BMI (always in kg/cm)
+  let pesoKg=peso, altCm=alt;
+  if(u==='lb') pesoKg=peso*0.453592;
+  const bmi=pesoKg/((altCm/100)*(altCm/100));
+  const bmiR=Math.round(bmi*10)/10;
+
+  // IMC label + color + needle angle
+  let label,color,bgColor,angle,riskT,riskTxt;
+  if(bmi<18.5){
+    label='Abaixo do peso';color='#4285f4';bgColor='#e8f0fe';angle=-90;
+    riskT='Riscos do baixo peso';riskTxt='Deficiência nutricional, fadiga, sistema imunológico enfraquecido e perda de massa muscular.';
+  } else if(bmi<25){
+    label='Peso normal';color='#34a853';bgColor='#e6f4ea';angle=-45;
+    riskT='Mantenha seu peso saudável';riskTxt='Seu IMC está na faixa ideal. O plano cetogênico vai ajudá-la a manter e melhorar sua composição corporal.';
+  } else if(bmi<30){
+    label='Sobrepeso';color='#fbbc04';bgColor='#fef9e7';angle=0;
+    riskT='Riscos de um IMC não saudável';riskTxt='Pressão alta, aumento do risco de ataque cardíaco, diabetes tipo 2, dor crônica nas costas e articulações.';
+  } else {
+    label='Obesidade';color='#ea4335';bgColor='#fce8e6';angle=60;
+    riskT='Riscos de IMC elevado';riskTxt='Risco alto de diabetes, doenças cardiovasculares, apneia do sono e problemas articulares. O plano cetogênico pode ajudar.';
+  }
+
+  document.getElementById('imcLabel').textContent=label;
+  document.getElementById('imcLabel').style.color=color;
+  document.getElementById('imcBox').style.background=bgColor;
+  document.getElementById('imcRiskTitle').textContent=riskT;
+  document.getElementById('imcRiskText').textContent=riskTxt;
+
+  // Rotate needle: -90deg = leftmost (baixo), 0=centro(normal), +90=rightmost(alto)
+  document.getElementById('needle').setAttribute('transform','rotate('+angle+' 90 90)');
+
+  // Profile summary
+  const objMap={'perder-peso':['⚖️','Perder peso'],'forma':['🏃‍♀️','Ficar em forma'],'tonificar':['💪','Tonificar'],'metabolismo':['🔥','Acelerar metabolismo'],'energia':['⚡','Mais energia'],'hormonal':['🌸','Equilíbrio hormonal']};
+  const obj=objMap[S.obj]||['⚖️','Perder peso'];
+  document.getElementById('rObjEmoji').textContent=obj[0];
+  document.getElementById('rObjText').textContent=obj[1];
+
+  const exMap={nao:'Nenhum',tento:'Leve',as_vezes:'Moderado',regular:'Intenso'};
+  document.getElementById('rExerText').textContent=exMap[S.exercicio]||'Leve';
+
+  const atMap={escritorio:'Baixo',ativa:'Moderado',academia:'Alto',casa:'Baixo'};
+  document.getElementById('rAtivText').textContent=atMap[S.rotina]||'Baixo';
+
+  // Body image by corpo type
+  const CDN2='https://cdn.nocarbschallenge.com/funnel-assets/quiz';
+  const corpoImgMap={regular:CDN2+'/female-regular-sized.png',acima:CDN2+'/female-plump-sized.png',sobrepeso:CDN2+'/female-extra-sized.png'};
+  document.getElementById('resumoBodyImg').src=corpoImgMap[S.corpo]||corpoImgMap.acima;
+}
+
+// ── REVIEWS LOADING ───────────────────────────
+function goReviews(){
+  nx(); // go to s19
+  const circle=document.getElementById('reviewCircle');
+  const pctEl=document.getElementById('reviewPct');
+  const circumference=239;
+  let p=0;
+  const iv=setInterval(()=>{
+    p+=Math.random()*4+1.5;
+    if(p>100)p=100;
+    const offset=circumference-(p/100)*circumference;
+    circle.style.strokeDashoffset=offset;
+    pctEl.textContent=Math.floor(p)+'%';
+    if(p>=100){
+      clearInterval(iv);
+      setTimeout(()=>{buildResult();nx();},600);
+    }
+  },80);
+}
+
+</script>
+</body>
+</html>
